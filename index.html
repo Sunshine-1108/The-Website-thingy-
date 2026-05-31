@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Party Vault</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════════ -->
+<!--  NAVIGATION BAR                                       -->
+<!-- ════════════════════════════════════════════════════ -->
+<nav class="navbar">
+  <div class="nav-container">
+    <h1 class="nav-title">🎉 Party Vault</h1>
+    <div class="nav-right">
+      <span class="nav-username" id="nav-username">Guest</span>
+      <button id="nav-logout" class="nav-btn logout-btn" onclick="doLogout()" style="display: none;">Logout</button>
+    </div>
+  </div>
+</nav>
+
+<!-- ════════════════════════════════════════════════════ -->
+<!--  AUTH SCREEN                                          -->
+<!-- ════════════════════════════════════════════════════ -->
+<div id="screen-auth" class="screen active">
+  <div class="auth-container">
+    <h2>Welcome to Party Vault</h2>
+    <p>Simple local multiplayer Truth or Dare</p>
+
+    <div class="auth-tabs">
+      <button class="auth-tab-btn active" data-tab="tab-login" onclick="showTab('tab-login')">Login</button>
+      <button class="auth-tab-btn" data-tab="tab-register" onclick="showTab('tab-register')">Register</button>
+    </div>
+
+    <!-- LOGIN TAB -->
+    <div id="tab-login" class="auth-tab" style="display: block;">
+      <div class="field-group">
+        <label>Username</label>
+        <input type="text" id="login-username" class="field" placeholder="Enter username">
+      </div>
+      <div class="field-group">
+        <label>Password</label>
+        <input type="password" id="login-password" class="field" placeholder="Enter password">
+      </div>
+      <button class="btn btn-primary" onclick="doLogin()">Login</button>
+    </div>
+
+    <!-- REGISTER TAB -->
+    <div id="tab-register" class="auth-tab" style="display: none;">
+      <div class="field-group">
+        <label>Username</label>
+        <input type="text" id="reg-username" class="field" placeholder="Choose username">
+      </div>
+      <div class="field-group">
+        <label>Password</label>
+        <input type="password" id="reg-password" class="field" placeholder="Enter password">
+      </div>
+      <div class="field-group">
+        <label>Confirm Password</label>
+        <input type="password" id="reg-confirm" class="field" placeholder="Confirm password">
+      </div>
+      <button class="btn btn-primary" onclick="doRegister()">Register</button>
+    </div>
+
+    <div id="auth-error" class="error-message"></div>
+
+    <!-- GUEST LOGIN -->
+    <div class="guest-section">
+      <p>Or continue as guest:</p>
+      <button class="btn btn-secondary" onclick="doGuest()">Play as Guest</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════ -->
+<!--  HUB SCREEN                                           -->
+<!-- ════════════════════════════════════════════════════ -->
+<div id="screen-hub" class="screen">
+  <div class="container">
+    <h2>Party Vault Hub</h2>
+    <p>Select how you want to play:</p>
+
+    <div class="hub-buttons">
+      <button class="btn btn-large" onclick="hubPlayLocal()">
+        <div class="btn-icon">🎮</div>
+        <div>Play Local</div>
+        <small>Single device, pass around</small>
+      </button>
+      <button class="btn btn-large" onclick="hubCreateRoom()">
+        <div class="btn-icon">🔗</div>
+        <div>Host Online Room</div>
+        <small>Share room code with friends</small>
+      </button>
+      <button class="btn btn-large" onclick="showJoinModal()">
+        <div class="btn-icon">🔓</div>
+        <div>Join Online Room</div>
+        <small>Enter a room code</small>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════ -->
+<!--  JOIN ROOM MODAL                                      -->
+<!-- ════════════════════════════════════════════════════ -->
+<div id="join-modal" class="modal" style="display: none;">
+  <div class="modal-content">
+    <h3>Join a Room</h3>
+    <input type="text" id="join-code-input" class="field" placeholder="Enter room code (e.g. ABC12)">
+    <div class="modal-buttons">
+      <button class="btn btn-primary" onclick="hubJoinRoom()">Join</button>
+      <button class="btn btn-secondary" onclick="closeJoinModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════ -->
+<!--  DIFFICULTY SCREEN                                    -->
+<!-- ════════════════════════════════════════════════════ -->
+<div id="screen-difficulty" class="screen">
+  <div class="container">
+    <h2>Choose Difficulty</h2>
+    <p>Select the level of intensity:</p>
+
+    <div class="difficulty-options">
+      <button class="difficulty-btn friendly" onclick="pickDifficulty('friendly')">
+        <div class="diff-emoji">😊</div>
+        <div>Friendly</div>
+        <small>Fun & lighthearted</small>
+      </button>
+      <button class="difficulty-btn moderate" onclick="pickDifficulty('moderate')">
+        <div class="diff-emoji">😏</div>
+        <div>Moderate</div>
+        <small>Spicy & bold</small>
+      </button>
+      <button class="difficulty-btn extreme" onclick="pickDifficulty('extreme')">
+        <div class="diff-emoji">🔥</div>
+        <div>Extreme</div>
+        <small>No limits!</small>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════ -->
+<!--  DIFFICULTY SYNC SCREEN (for guests in online rooms) -->
+<!-- ════════════════════════════════════════════════════ -->
+<div id="screen-difficulty-sync" class="screen">
+  <div class="container">
+    <h2>Host is choosing difficulty...</h2>
+    <div class="spinner"></div>
+    <p>Stand by.</p>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════ -->
+<!--  SETUP SCREEN (local mode only)                       -->
+<!-- ════════════════════════════════════════════════════ -->
+<div id="screen-setup" class="screen">
+  <div class="container">
+    <h2>Add Players</h2>
+    <div class="player-count-control">
+      <button class="btn-small" onclick="changeCount(-1)">−</button>
+      <span id="player-count-display">3</span> Players
+      <button class="btn-small" onclick="changeCount(1)">+</button>
+    </div>
+
+    <div id="players-list" class="players-list"></div>
+    <div id="name-error" class="error-message"></div>
+
+    <button class="btn btn-primary btn-block" onclick="startGame()">Start Game</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════ -->
+<!--  LOBBY SCREEN (online mode)                           -->
+<!-- ════════════════════════════════════════════════════ -->
+<div id="screen-lobby" class="screen">
+  <div class="container">
+    <h2>Lobby</h2>
+    <div class="room-info">
+      <div>Room Code: <strong id="room-code-display">----</strong></div>
+      <div>Difficulty: <strong id="lobby-diff-display">Friendly</strong></div>
+    </div>
+
+    <h3>Players:</h3>
+    <ul id="lobby-players" class="player-list"></ul>
+
+    <div id="lobby-host-controls" style="display: none;">
+      <button class="btn btn-primary btn-block" onclick="hostStartGame()">Start Game</button>
+    </div>
+
+    <div id="lobby-guest-msg" style="display: none;">
+      <p><em>Waiting for host to start the game...</em></p>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════ -->
+<!--  SPIN SCREEN                                          -->
+<!-- ════════════════════════════════════════════════════ -->
+<div id="screen-spin" class="screen">
+  <div class="container">
+    <div class="spin-section">
+      <div class="difficulty-badge-container">
+        <span id="diff-badge" class="difficulty-badge friendly">FRIENDLY</span>
+      </div>
+      <canvas id="wheel-canvas"></canvas>
+      <div class="current-player-display">
+        <div>Next Up:</div>
+        <div id="current-player" class="player-name">Spin to pick a player</div>
+      </div>
+      <button id="spin-btn" class="btn btn-large btn-spin" onclick="spinWheel()">SPIN!</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════ -->
+<!--  TRUTH OR DARE SELECTION SCREEN                      -->
+<!-- ════════════════════════════════════════════════════ -->
+<div id="screen-tod" class="screen">
+  <div class="container">
+    <h2>Truth or Dare?</h2>
+    <div id="tod-player-name" class="player-name"></div>
+
+    <div class="tod-buttons">
+      <button class="btn btn-large" onclick="getQuestion('truth')">
+        <div class="btn-icon">🤔</div>
+        Truth
+      </button>
+      <button class="btn btn-large" onclick="getQuestion('dare')">
+        <div class="btn-icon">😈</div>
+        Dare
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════ -->
+<!--  QUESTION DISPLAY SCREEN                             -->
+<!-- ════════════════════════════════════════════════════ -->
+<div id="screen-question" class="screen">
+  <div class="container">
+    <div class="question-display">
+      <span id="q-badge" class="q-type-badge truth">TRUTH</span>
+      <div id="q-text" class="question-text">Loading...</div>
+    </div>
+
+    <div class="question-actions">
+      <button id="skip-btn" class="btn btn-secondary" onclick="skipQuestion()">Skip</button>
+      <button class="btn btn-primary" onclick="nextQuestion()">Next</button>
+    </div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
